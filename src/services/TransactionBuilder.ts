@@ -69,6 +69,14 @@ export class TransactionBuilder {
       throw new Error('Invalid mnemonic');
     }
 
+    console.log('TransactionBuilder: Starting transaction build', {
+      recipientAddress,
+      amountSats,
+      feeRate,
+      utxoCount: utxos.length,
+      network: params.network,
+    });
+
     // Derive master key from mnemonic
     const seed = bip39.mnemonicToSeedSync(mnemonic);
     const masterKey = HDKey.fromMasterSeed(seed);
@@ -94,6 +102,15 @@ export class TransactionBuilder {
 
     // Check if we have enough funds
     const estimatedFee = this.estimateFee(selectedUtxos.length, 2, feeRate);
+    
+    console.log('TransactionBuilder: UTXO selection complete', {
+      selectedCount: selectedUtxos.length,
+      totalInput,
+      amountSats,
+      estimatedFee,
+      total: amountSats + estimatedFee,
+    });
+    
     if (totalInput < amountSats + estimatedFee) {
       throw new Error(`Insufficient funds. Need ${amountSats + estimatedFee} sats, have ${totalInput} sats`);
     }
@@ -162,14 +179,25 @@ export class TransactionBuilder {
       psbt.signInput(i, keyPair);
     }
 
+    console.log('TransactionBuilder: All inputs signed, finalizing...');
+    
     // Finalize all inputs
     psbt.finalizeAllInputs();
 
+    console.log('TransactionBuilder: Extracting transaction...');
+    
     // Extract transaction
     const tx = psbt.extractTransaction();
     const txHex = tx.toHex();
     const txId = tx.getId();
     const size = tx.virtualSize();
+
+    console.log('TransactionBuilder: Transaction built successfully', {
+      txId,
+      size,
+      fee: actualFee,
+      hexLength: txHex.length,
+    });
 
     return {
       txHex,

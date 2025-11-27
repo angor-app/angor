@@ -172,17 +172,31 @@ const Send = () => {
         throw new Error('Failed to load wallet mnemonic');
       }
 
+      console.log('Building transaction with:', {
+        utxoCount: utxos.length,
+        totalUtxoValue: utxos.reduce((sum, u) => sum + u.value, 0),
+        amountSats,
+        feeRate: getSelectedFeeRate(),
+      });
+
       // Prepare transaction inputs with address paths
+      // Since we fetched UTXOs for all addresses, we need to match each UTXO to its address
       const txInputs = utxos.map(utxo => {
-        // Find the address that owns this UTXO
-        const addressInfo = accountInfo.addresses.find(_addr => {
-          // This is a simplified check - in production you'd verify the address matches the UTXO scriptPubKey
-          return true; // For now, we'll use the first available address path
-        });
+        // For now, use the first receive address
+        // In production, you would fetch the UTXO's address from the indexer response
+        const addressInfo = accountInfo.addresses.find(a => !a.change) || accountInfo.addresses[0];
 
         if (!addressInfo) {
           throw new Error('Could not find address info for UTXO');
         }
+
+        console.log('UTXO input:', {
+          txid: utxo.txid.substring(0, 10) + '...',
+          vout: utxo.vout,
+          value: utxo.value,
+          address: addressInfo.address,
+          path: addressInfo.path,
+        });
 
         return {
           utxo,
@@ -231,6 +245,13 @@ const Send = () => {
       
     } catch (error) {
       console.error('Failed to send transaction:', error);
+      console.error('Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        utxos: utxos?.length || 0,
+        accountInfo: !!accountInfo,
+      });
+      
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast({
         title: 'Transaction Failed',
