@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 195 35% 95%;
+    --foreground: 195 15% 15%;
+
+    --card: 195 30% 98%;
+    --card-foreground: 195 15% 15%;
+
+    --popover: 195 30% 98%;
+    --popover-foreground: 195 15% 15%;
+
+    --primary: 195 60% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 195 25% 85%;
+    --secondary-foreground: 195 15% 15%;
+
+    --muted: 195 25% 90%;
+    --muted-foreground: 195 15% 40%;
+
+    --accent: 175 60% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 195 20% 80%;
+    --input: 195 20% 85%;
+    --ring: 195 60% 45%;
+
+    --radius: 1rem;
+
+    --sidebar-background: 195 30% 96%;
+    --sidebar-foreground: 195 15% 20%;
+    --sidebar-primary: 195 60% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 195 25% 90%;
+    --sidebar-accent-foreground: 195 15% 20%;
+    --sidebar-border: 195 20% 85%;
+    --sidebar-ring: 195 60% 45%;
+  }
+
+  .dark {
+    --background: 195 45% 12%;
+    --foreground: 195 15% 95%;
+
+    --card: 195 40% 16%;
+    --card-foreground: 195 15% 95%;
+
+    --popover: 195 40% 16%;
+    --popover-foreground: 195 15% 95%;
+
+    --primary: 195 60% 55%;
+    --primary-foreground: 195 45% 10%;
+
+    --secondary: 195 35% 20%;
+    --secondary-foreground: 195 15% 95%;
+
+    --muted: 195 35% 18%;
+    --muted-foreground: 195 15% 70%;
+
+    --accent: 175 55% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 50.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 195 30% 22%;
+    --input: 195 30% 22%;
+    --ring: 195 60% 55%;
+    
+    --sidebar-background: 195 40% 14%;
+    --sidebar-foreground: 195 15% 90%;
+    --sidebar-primary: 195 60% 55%;
+    --sidebar-primary-foreground: 195 45% 10%;
+    --sidebar-accent: 195 35% 18%;
+    --sidebar-accent-foreground: 195 15% 90%;
+    --sidebar-border: 195 30% 20%;
+    --sidebar-ring: 195 60% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .dashboard-background {
+    background-image: url('/images/back.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .dashboard-overlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(15, 40, 51, 0.8),
+      rgba(26, 61, 77, 0.85),
+      rgba(15, 40, 51, 0.9)
+    );
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
+}
