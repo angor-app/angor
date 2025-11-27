@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useMemo, useCallback } from 'react';
 import { z } from 'zod';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { AppContext, type AppConfig, type AppContextType, type Theme, type RelayMetadata } from '@/contexts/AppContext';
@@ -24,7 +24,7 @@ const RelayMetadataSchema = z.object({
 // Zod schema for AppConfig validation
 const AppConfigSchema = z.object({
   theme: z.enum(['dark', 'light', 'system']),
-  network: z.enum(['mainnet', 'testnet', 'regtest']),
+  network: z.enum(['mainnet', 'testnet']),
   explorers: z.array(z.object({
     url: z.string().url(),
     isDefault: z.boolean(),
@@ -42,6 +42,9 @@ const AppConfigSchema = z.object({
   relayMetadata: RelayMetadataSchema,
 }) satisfies z.ZodType<AppConfig>;
 
+// Track if migration has been done to prevent infinite loops
+const migrationKey = 'nostr:app-config-migrated';
+
 export function AppProvider(props: AppProviderProps) {
   const {
     children,
@@ -56,23 +59,47 @@ export function AppProvider(props: AppProviderProps) {
     {
       serialize: JSON.stringify,
       deserialize: (value: string) => {
-        const parsed = JSON.parse(value);
-        return AppConfigSchema.partial().parse(parsed);
+        try {
+          const parsed = JSON.parse(value);
+          const validated = AppConfigSchema.partial().parse(parsed);
+          return validated;
+        } catch {
+          // Check if migration already done in this session
+          const alreadyMigrated = sessionStorage.getItem(migrationKey);
+          if (alreadyMigrated) {
+            return {};
+          }
+          
+          // Mark as migrated
+          sessionStorage.setItem(migrationKey, 'true');
+          console.warn('Invalid config in localStorage, clearing it.');
+          
+          // Clear invalid config immediately
+          try {
+            localStorage.removeItem(storageKey);
+          } catch {
+            // Ignore errors
+          }
+          
+          return {};
+        }
       }
     }
   );
 
-  // Generic config updater with callback pattern
-  const updateConfig = (updater: (currentConfig: Partial<AppConfig>) => Partial<AppConfig>) => {
+  // Generic config updater with callback pattern - memoized to prevent re-renders
+  const updateConfig = useCallback((updater: (currentConfig: Partial<AppConfig>) => Partial<AppConfig>) => {
     setConfig(updater);
-  };
+  }, [setConfig]);
 
-  const config = { ...defaultConfig, ...rawConfig };
+  // Memoize merged config to prevent unnecessary re-renders
+  const config = useMemo(() => ({ ...defaultConfig, ...rawConfig }), [defaultConfig, rawConfig]);
 
-  const appContextValue: AppContextType = {
+  // Memoize context value to prevent re-renders when config hasn't actually changed
+  const appContextValue: AppContextType = useMemo(() => ({
     config,
     updateConfig,
-  };
+  }), [config, updateConfig]);
 
   // Apply theme effects to document
   useApplyTheme(config.theme);

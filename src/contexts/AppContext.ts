@@ -1,7 +1,7 @@
 import { createContext } from "react";
 
 export type Theme = "dark" | "light" | "system";
-export type BitcoinNetwork = "mainnet" | "testnet" | "regtest";
+export type BitcoinNetwork = "mainnet" | "testnet";
 
 export interface ExplorerConfig {
   url: string;

@@ -39,7 +39,14 @@ export function useLocalStorage<T>(
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === key && e.newValue !== null) {
         try {
-          setState(deserialize(e.newValue));
+          const newValue = deserialize(e.newValue);
+          // Only update if the value actually changed
+          setState(prev => {
+            if (JSON.stringify(prev) === JSON.stringify(newValue)) {
+              return prev;
+            }
+            return newValue;
+          });
         } catch (error) {
           console.warn(`Failed to sync ${key} from localStorage:`, error);
         }

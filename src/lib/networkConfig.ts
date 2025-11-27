@@ -8,7 +8,7 @@ export interface NetworkConfig {
   relays: string[];
 }
 
-export const NETWORK_CONFIG: Record<'mainnet' | 'testnet' | 'regtest', NetworkConfig> = {
+export const NETWORK_CONFIG: Record<'mainnet' | 'testnet', NetworkConfig> = {
   mainnet: {
     indexers: [
       'https://fulcrum.angor.online',
@@ -47,30 +47,19 @@ export const NETWORK_CONFIG: Record<'mainnet' | 'testnet' | 'regtest', NetworkCo
       'wss://relay2.angor.io',
     ],
   },
-  regtest: {
-    indexers: [
-      'http://localhost:3000',
-    ],
-    explorers: [
-      'http://localhost:3000',
-    ],
-    relays: [
-      'ws://localhost:7777',
-    ],
-  },
 };
 
 /**
  * Get the default explorer URL for a network
  */
-export function getExplorerUrl(network: 'mainnet' | 'testnet' | 'regtest'): string {
+export function getExplorerUrl(network: 'mainnet' | 'testnet'): string {
   return NETWORK_CONFIG[network].explorers[0];
 }
 
 /**
  * Get transaction URL for explorer
  */
-export function getTxUrl(txid: string, network: 'mainnet' | 'testnet' | 'regtest'): string {
+export function getTxUrl(txid: string, network: 'mainnet' | 'testnet'): string {
   const explorer = getExplorerUrl(network);
   return `${explorer}/tx/${txid}`;
 }
@@ -78,7 +67,7 @@ export function getTxUrl(txid: string, network: 'mainnet' | 'testnet' | 'regtest
 /**
  * Get address URL for explorer
  */
-export function getAddressUrl(address: string, network: 'mainnet' | 'testnet' | 'regtest', customExplorer?: string): string {
+export function getAddressUrl(address: string, network: 'mainnet' | 'testnet', customExplorer?: string): string {
   const explorer = customExplorer || getExplorerUrl(network);
   return `${explorer}/address/${address}`;
 }

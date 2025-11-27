@@ -11,11 +11,6 @@ export const NETWORKS: Record<string, NetworkConfig> = {
     indexerUrl: 'https://btc.indexer.blockcore.net/api',
     mempoolUrl: 'https://mempool.space/testnet/api',
   },
-  regtest: {
-    network: 'regtest',
-    indexerUrl: 'http://localhost:9910/api',
-    mempoolUrl: 'http://localhost:8999/api',
-  },
 };
 
 export const DEFAULT_NETWORK: NetworkConfig = NETWORKS.testnet;
@@ -23,7 +18,6 @@ export const DEFAULT_NETWORK: NetworkConfig = NETWORKS.testnet;
 export const ANGOR_FEE_ADDRESS = {
   mainnet: 'bc1qangorfeesaddress',
   testnet: 'tb1qangorfeesaddress',
-  regtest: 'bcrt1qangorfeesaddress',
 };
 
 export const ANGOR_ROOT_KEY = 'angor-root';

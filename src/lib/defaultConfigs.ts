@@ -50,31 +50,13 @@ export const TESTNET_CONFIG: Omit<AppConfig, 'theme' | 'relayMetadata'> = {
 };
 
 /**
- * Default configuration for regtest
- */
-export const REGTEST_CONFIG: Omit<AppConfig, 'theme' | 'relayMetadata'> = {
-  network: 'regtest',
-  explorers: [
-    { url: 'http://localhost:3000', isDefault: true },
-  ],
-  indexers: [
-    { url: 'http://localhost:3000', status: 'unknown', isDefault: true },
-  ],
-  nostrRelays: [
-    { url: 'ws://localhost:7777', name: 'local relay', status: 'unknown' },
-  ],
-};
-
-/**
  * Get default config for a specific network
  */
-export function getDefaultNetworkConfig(network: 'mainnet' | 'testnet' | 'regtest') {
+export function getDefaultNetworkConfig(network: 'mainnet' | 'testnet') {
   switch (network) {
     case 'mainnet':
       return MAINNET_CONFIG;
     case 'testnet':
       return TESTNET_CONFIG;
-    case 'regtest':
-      return REGTEST_CONFIG;
   }
 }

@@ -5,10 +5,10 @@ import * as btc from 'bitcoinjs-lib';
 import { WalletWords, AccountInfo, AddressInfo } from '@/types/angor.types';
 
 export class WalletOperations {
-  private networkType: 'mainnet' | 'testnet' | 'regtest';
+  private networkType: 'mainnet' | 'testnet';
   private network: btc.Network;
 
-  constructor(networkType: 'mainnet' | 'testnet' | 'regtest' = 'testnet') {
+  constructor(networkType: 'mainnet' | 'testnet' = 'testnet') {
     this.networkType = networkType;
     this.network = networkType === 'mainnet' 
       ? btc.networks.bitcoin 

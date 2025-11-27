@@ -98,7 +98,7 @@ export interface InvestmentStage {
 }
 
 export interface NetworkConfig {
-  network: 'mainnet' | 'testnet' | 'regtest';
+  network: 'mainnet' | 'testnet';
   indexerUrl: string;
   mempoolUrl: string;
 }

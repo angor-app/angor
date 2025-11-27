@@ -28,7 +28,7 @@ interface BuildTransactionParams {
   feeRate: number; // sat/vB
   utxos: TransactionInput[];
   changeAddress: string;
-  network: 'mainnet' | 'testnet' | 'regtest';
+  network: 'mainnet' | 'testnet';
 }
 
 interface BuildTransactionResult {
@@ -41,7 +41,7 @@ interface BuildTransactionResult {
 export class TransactionBuilder {
   private network: btc.Network;
 
-  constructor(network: 'mainnet' | 'testnet' | 'regtest' = 'testnet') {
+  constructor(network: 'mainnet' | 'testnet' = 'testnet') {
     this.network = network === 'mainnet' 
       ? btc.networks.bitcoin 
       : btc.networks.testnet;
@@ -221,7 +221,7 @@ export class TransactionBuilder {
   /**
    * Fetch transaction hex from indexer
    */
-  private async fetchTransactionHex(_txid: string, _network: 'mainnet' | 'testnet' | 'regtest'): Promise<string> {
+  private async fetchTransactionHex(_txid: string, _network: 'mainnet' | 'testnet'): Promise<string> {
     // This is a placeholder - you'll need to implement actual fetching from your indexers
     // For now, we'll use the witness UTXO approach which doesn't require the full tx
     return '';

@@ -61,10 +61,17 @@ export function useWalletStorage() {
     if (!wallet || !user) return null;
 
     try {
-      const decrypted = await user.signer.nip44!.decrypt(user.pubkey, wallet.mnemonic);
+      // Check if nip44 encryption is available
+      if (!user.signer.nip44) {
+        // Silent return - extension not available
+        return null;
+      }
+
+      const decrypted = await user.signer.nip44.decrypt(user.pubkey, wallet.mnemonic);
       return decrypted;
     } catch (error) {
-      console.error('Failed to decrypt mnemonic:', error);
+      // Silent fail for missing extension or decryption errors
+      // The UI will handle showing appropriate message when accountInfo is null
       return null;
     }
   };

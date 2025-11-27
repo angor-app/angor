@@ -23,7 +23,7 @@ export interface AddressUTXO {
  */
 async function fetchAddressBalance(
   address: string,
-  network: 'mainnet' | 'testnet' | 'regtest',
+  network: 'mainnet' | 'testnet',
   configIndexers?: string[]
 ): Promise<AddressBalance> {
   const indexers = configIndexers && configIndexers.length > 0 
@@ -62,11 +62,52 @@ async function fetchAddressBalance(
 }
 
 /**
+ * Mempool API response types
+ */
+interface MempoolVout {
+  scriptpubkey: string;
+  scriptpubkey_asm: string;
+  scriptpubkey_type: string;
+  scriptpubkey_address?: string;
+  value: number;
+}
+
+interface MempoolStatus {
+  confirmed: boolean;
+  block_height?: number;
+  block_hash?: string;
+  block_time?: number;
+}
+
+interface MempoolTransaction {
+  txid: string;
+  version: number;
+  locktime: number;
+  vin: unknown[];
+  vout: MempoolVout[];
+  size: number;
+  weight: number;
+  fee: number;
+  status: MempoolStatus;
+}
+
+interface MempoolOutspend {
+  spent: boolean;
+  txid?: string;
+  vin?: number;
+  status?: MempoolStatus;
+}
+
+/**
  * Fetch UTXOs for an address
+ * Implementation follows Mempool Space API pattern:
+ * 1. GET /address/{address}/txs - Get all transactions
+ * 2. For each tx output matching address, GET /tx/{txid}/outspends
+ * 3. Filter for unspent outputs
  */
 async function fetchAddressUTXOs(
   address: string,
-  network: 'mainnet' | 'testnet' | 'regtest',
+  network: 'mainnet' | 'testnet',
   configIndexers?: string[]
 ): Promise<AddressUTXO[]> {
   const indexers = configIndexers && configIndexers.length > 0 
@@ -75,34 +116,61 @@ async function fetchAddressUTXOs(
   
   for (const indexer of indexers) {
     try {
-      const response = await fetch(`${indexer}/api/address/${address}/utxo`, {
-        signal: AbortSignal.timeout(5000),
+      // Step 1: Fetch all transactions for the address (limit to last 50)
+      const txsUrl = `${indexer}/api/address/${address}/txs`;
+      
+      const txsResponse = await fetch(txsUrl, {
+        signal: AbortSignal.timeout(10000),
       });
 
-      if (!response.ok) {
+      if (!txsResponse.ok) {
         continue;
       }
 
-      const data = await response.json();
-      return data.map((utxo: { 
-        txid: string; 
-        vout: number; 
-        value: number; 
-        status?: { 
-          confirmed?: boolean; 
-          block_height?: number; 
-          block_hash?: string;
-          block_time?: number;
-        } 
-      }) => ({
-        txid: utxo.txid,
-        vout: utxo.vout,
-        value: utxo.value,
-        height: utxo.status?.block_height || 0,
-        confirmations: utxo.status?.confirmed ? 1 : 0, // Mempool API doesn't return confirmations directly
-      }));
-    } catch (error) {
-      console.warn(`Failed to fetch UTXOs from ${indexer}:`, error);
+      const allTransactions: MempoolTransaction[] = await txsResponse.json();
+      // Limit to recent transactions to avoid hanging
+      const transactions = allTransactions.slice(0, 50);
+      
+      const utxos: AddressUTXO[] = [];
+
+      // Step 2: Process each transaction
+      for (const tx of transactions) {
+        // Check each output (vout) in the transaction
+        for (let voutIndex = 0; voutIndex < tx.vout.length; voutIndex++) {
+          const vout = tx.vout[voutIndex];
+          
+          // Skip if output doesn't match our address
+          if (vout.scriptpubkey_address !== address) {
+            continue;
+          }
+
+          // Step 3: Check if this output is spent
+          const outspendsUrl = `${indexer}/api/tx/${tx.txid}/outspends`;
+          const outspendsResponse = await fetch(outspendsUrl, {
+            signal: AbortSignal.timeout(5000),
+          });
+
+          if (!outspendsResponse.ok) {
+            continue;
+          }
+
+          const outspends: MempoolOutspend[] = await outspendsResponse.json();
+          
+          // Check if this specific output is unspent
+          if (voutIndex < outspends.length && !outspends[voutIndex].spent) {
+            utxos.push({
+              txid: tx.txid,
+              vout: voutIndex,
+              value: vout.value,
+              height: tx.status.block_height || 0,
+              confirmations: tx.status.confirmed ? 1 : 0,
+            });
+          }
+        }
+      }
+
+      return utxos;
+    } catch {
       continue;
     }
   }
@@ -183,8 +251,6 @@ export function useAddressUTXOs(addresses: string[]) {
       
       const allUtxos: AddressUTXOWithAddress[] = [];
       
-      console.log('Fetching UTXOs for addresses:', addresses);
-      
       for (const address of addresses) {
         try {
           const utxos = await fetchAddressUTXOs(
@@ -199,15 +265,11 @@ export function useAddressUTXOs(addresses: string[]) {
             address,
           }));
           
-          console.log(`Fetched ${utxos.length} UTXOs for ${address}:`, utxosWithAddress);
-          
           allUtxos.push(...utxosWithAddress);
-        } catch (error) {
-          console.error(`Failed to fetch UTXOs for ${address}:`, error);
+        } catch {
+          // Silently continue to next address
         }
       }
-      
-      console.log(`Total UTXOs fetched: ${allUtxos.length}`);
       
       return allUtxos;
     },

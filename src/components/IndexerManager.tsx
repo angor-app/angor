@@ -80,10 +80,10 @@ export function IndexerManager() {
     setIsRefreshing(false);
   }, [config.indexers, refreshStatus]);
 
-  // Check all indexer statuses on mount
+  // Automatic status checking is disabled - only manual refresh
   useEffect(() => {
-    checkAllStatuses();
-  }, [checkAllStatuses]);
+    // Auto-check disabled to prevent excessive network requests
+  }, []);
 
   return (
     <Card className="bg-[#1a3d4d]/50 border-teal-700/40 backdrop-blur-xl">

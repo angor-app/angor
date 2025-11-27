@@ -114,18 +114,11 @@ const Settings = () => {
                         <span className="text-xs text-teal-100/60">Production network</span>
                       </div>
                     </SelectItem>
-                    <SelectItem value="regtest" className="text-white focus:bg-teal-900/40 focus:text-white">
-                      <div className="flex flex-col">
-                        <span>Regtest</span>
-                        <span className="text-xs text-teal-100/60">Local testing</span>
-                      </div>
-                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-sm text-teal-100/60">
                   {config.network === 'mainnet' && '⚠️ Using real Bitcoin - be careful with transactions'}
                   {config.network === 'testnet' && '✓ Using test Bitcoin - safe for development'}
-                  {config.network === 'regtest' && '✓ Using local network - for testing only'}
                 </p>
               </div>
             </CardContent>

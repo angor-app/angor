@@ -12,7 +12,7 @@ interface RecoverWalletDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onComplete: () => void;
-  networkType: 'mainnet' | 'testnet' | 'regtest';
+  networkType: 'mainnet' | 'testnet';
 }
 
 export function RecoverWalletDialog({ isOpen, onClose, onComplete, networkType }: RecoverWalletDialogProps) {

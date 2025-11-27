@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSeoMeta } from '@unhead/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Send, ArrowDownToLine, Copy, ExternalLink, Plus, KeyRound, Loader2 } from 'lucide-react';
+import { ArrowLeft, Send, ArrowDownToLine, Copy, ExternalLink, Plus, KeyRound, Loader2, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Dock } from '@/components/Dock';
 import { useWalletStorage } from '@/hooks/useWalletStorage';
@@ -47,6 +47,7 @@ const Wallet = () => {
         );
         setAccountInfo(account);
       }
+      // If mnemonic is null, extension is not available - handled by UI check below
     } catch (error) {
       console.error('Failed to load wallet account:', error);
       toast({
@@ -57,7 +58,7 @@ const Wallet = () => {
     } finally {
       setIsLoadingAccount(false);
     }
-  }, [loadMnemonic, config.network, wallet?.accountIndex]);
+  }, [loadMnemonic, config.network, wallet?.accountIndex, toast]);
 
   useEffect(() => {
     if (hasWallet && !accountInfo) {
@@ -208,6 +209,40 @@ const Wallet = () => {
     );
   }
 
+  // Wallet exists but accountInfo couldn't be loaded (likely missing Nostr extension)
+  if (!accountInfo) {
+    return (
+      <div className="min-h-screen relative overflow-hidden pb-32">
+        <div className="fixed inset-0 z-0 dashboard-background">
+          <div className="absolute inset-0 dashboard-overlay" />
+        </div>
+
+        <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
+          <Card className="bg-[#1a3d4d]/50 border-yellow-700/40 backdrop-blur-xl max-w-md w-full">
+            <CardContent className="p-8 text-center">
+              <AlertCircle className="w-16 h-16 mx-auto mb-4 text-yellow-400" />
+              <h2 className="text-2xl font-bold text-white mb-2">Extension Required</h2>
+              <p className="text-yellow-100/70 mb-6">
+                Please install a Nostr browser extension (like nos2x or Alby) with NIP-44 encryption support to access your encrypted wallet.
+              </p>
+              <div className="space-y-2">
+                <Button asChild className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white">
+                  <a href="https://chrome.google.com/webstore/detail/nos2x/kpgefcfmnafjgpblomihpgmejjdanjjp" target="_blank" rel="noopener noreferrer">
+                    Install nos2x Extension
+                  </a>
+                </Button>
+                <Button asChild variant="outline" className="w-full border-yellow-700/40 text-white hover:bg-white/10">
+                  <Link to="/">Go to Home</Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <Dock />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen relative overflow-hidden pb-32">
       <div className="fixed inset-0 z-0 dashboard-background">
@@ -240,21 +275,21 @@ const Wallet = () => {
 
         <div className="space-y-6">
           {/* Balance Card */}
-          <Card className="bg-gradient-to-br from-teal-500/20 to-cyan-600/20 border-teal-700/40 backdrop-blur-xl">
+          <Card className="bg-[#0a1f2e]/60 border-teal-700/30 backdrop-blur-xl">
             <CardContent className="p-8">
               <div className="text-center">
-                <p className="text-teal-100/70 mb-2">Total Balance</p>
+                <p className="text-teal-200/60 mb-2 font-medium">Total Balance</p>
                 {isLoadingBalance ? (
                   <div className="flex items-center justify-center gap-2 mb-6">
                     <Loader2 className="w-8 h-8 text-teal-400 animate-spin" />
                     <span className="text-2xl text-teal-100/70">Loading balance...</span>
                   </div>
                 ) : (
-                  <h2 className="text-5xl font-bold text-white mb-6">
-                    {balanceData?.totalBalanceBTC?.toFixed(8) || '0.00000000'} {config.network === 'testnet' ? 'tBTC' : 'BTC'}
+                  <h2 className="text-5xl font-bold text-white mb-3 drop-shadow-lg">
+                    {balanceData?.totalBalanceBTC?.toFixed(8) || '0.00000000'} <span className="text-3xl text-teal-200/80">{config.network === 'testnet' ? 'tBTC' : 'BTC'}</span>
                   </h2>
                 )}
-                <p className="text-teal-100/60 text-lg">
+                <p className="text-teal-200/60 text-lg font-medium">
                   {balanceData?.totalBalance ? `${balanceData.totalBalance.toLocaleString()} sats` : '0 sats'}
                 </p>
               </div>
@@ -262,7 +297,7 @@ const Wallet = () => {
               <div className="grid grid-cols-2 gap-4 mt-8">
                 <Button 
                   asChild
-                  className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white"
+                  className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-semibold"
                 >
                   <Link to="/wallet/send">
                     <Send className="w-4 h-4 mr-2" />
@@ -271,7 +306,8 @@ const Wallet = () => {
                 </Button>
                 <Button 
                   asChild
-                  className="bg-white/10 hover:bg-white/20 text-white border border-teal-700/40"
+                  variant="outline"
+                  className="bg-white/5 hover:bg-white/10 text-white border-teal-700/40 font-semibold"
                 >
                   <Link to="/wallet/receive">
                     <ArrowDownToLine className="w-4 h-4 mr-2" />
