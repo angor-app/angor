@@ -45,22 +45,24 @@ const AddWalletContent = forwardRef<HTMLDivElement, {
 }>(({ alias, setAlias, connectionUri, setConnectionUri }, ref) => (
   <div className="space-y-4 px-4" ref={ref}>
     <div>
-      <Label htmlFor="alias">Wallet Name (optional)</Label>
+      <Label htmlFor="alias" className="text-slate-300 font-medium">Wallet Name (optional)</Label>
       <Input
         id="alias"
         placeholder="My Lightning Wallet"
         value={alias}
         onChange={(e) => setAlias(e.target.value)}
+        className="bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500 focus:border-teal-500/50 focus:ring-teal-500/20"
       />
     </div>
     <div>
-      <Label htmlFor="connection-uri">Connection URI</Label>
+      <Label htmlFor="connection-uri" className="text-slate-300 font-medium">Connection URI</Label>
       <Textarea
         id="connection-uri"
         placeholder="nostr+walletconnect://..."
         value={connectionUri}
         onChange={(e) => setConnectionUri(e.target.value)}
         rows={3}
+        className="bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500 focus:border-teal-500/50 focus:ring-teal-500/20 font-mono text-xs"
       />
     </div>
   </div>
@@ -87,34 +89,48 @@ const WalletContent = forwardRef<HTMLDivElement, {
   handleRemoveConnection,
   setAddDialogOpen
 }, ref) => (
-  <div className="space-y-6 px-4 pb-4" ref={ref}>
+  <div 
+    className="space-y-6 px-4 pb-4 max-h-[60vh] overflow-y-auto wallet-scroll" 
+    ref={ref}
+  >
     {/* Current Status */}
-    <div className="space-y-3">
-      <h3 className="font-medium">Current Status</h3>
+    <div className="space-y-4">
+      <h3 className="font-semibold text-white text-sm">Current Status</h3>
       <div className="grid gap-3">
         {/* WebLN */}
-        <div className="flex items-center justify-between p-3 border rounded-lg">
+        <div className="flex items-center justify-between p-4 bg-slate-900/40 backdrop-blur-sm border border-slate-700/50 rounded-lg hover:bg-slate-900/60 transition-colors">
           <div className="flex items-center gap-3">
-            <Globe className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 bg-gradient-to-br from-teal-500/20 to-cyan-500/20 rounded-lg">
+              <Globe className="h-4 w-4 text-teal-400" />
+            </div>
             <div>
-              <p className="text-sm font-medium">WebLN</p>
-              <p className="text-xs text-muted-foreground">Browser extension</p>
+              <p className="text-sm font-semibold text-white">WebLN</p>
+              <p className="text-xs text-slate-400">Browser extension</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {webln && <CheckCircle className="h-4 w-4 text-green-600" />}
-            <Badge variant={webln ? "default" : "secondary"} className="text-xs">
+            {webln && <CheckCircle className="h-4 w-4 text-green-400" />}
+            <Badge 
+              variant={webln ? "default" : "secondary"} 
+              className={`text-xs backdrop-blur-sm ${
+                webln 
+                  ? 'bg-green-500/20 text-green-300 border-green-500/30' 
+                  : 'bg-slate-700/50 text-slate-300 border-slate-600/50'
+              }`}
+            >
               {webln ? "Ready" : "Not Found"}
             </Badge>
           </div>
         </div>
         {/* NWC */}
-        <div className="flex items-center justify-between p-3 border rounded-lg">
+        <div className="flex items-center justify-between p-4 bg-slate-900/40 backdrop-blur-sm border border-slate-700/50 rounded-lg hover:bg-slate-900/60 transition-colors">
           <div className="flex items-center gap-3">
-            <WalletMinimal className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-lg">
+              <WalletMinimal className="h-4 w-4 text-cyan-400" />
+            </div>
             <div>
-              <p className="text-sm font-medium">Nostr Wallet Connect</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm font-semibold text-white">Nostr Wallet Connect</p>
+              <p className="text-xs text-slate-400">
                 {connections.length > 0
                   ? `${connections.length} wallet${connections.length !== 1 ? 's' : ''} connected`
                   : "Remote wallet connection"
@@ -123,8 +139,15 @@ const WalletContent = forwardRef<HTMLDivElement, {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {hasNWC && <CheckCircle className="h-4 w-4 text-green-600" />}
-            <Badge variant={hasNWC ? "default" : "secondary"} className="text-xs">
+            {hasNWC && <CheckCircle className="h-4 w-4 text-green-400" />}
+            <Badge 
+              variant={hasNWC ? "default" : "secondary"} 
+              className={`text-xs backdrop-blur-sm ${
+                hasNWC 
+                  ? 'bg-green-500/20 text-green-300 border-green-500/30' 
+                  : 'bg-slate-700/50 text-slate-300 border-slate-600/50'
+              }`}
+            >
               {hasNWC ? "Ready" : "None"}
             </Badge>
           </div>
@@ -135,52 +158,77 @@ const WalletContent = forwardRef<HTMLDivElement, {
     {/* NWC Management */}
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-medium">Nostr Wallet Connect</h3>
-        <Button size="sm" variant="outline" onClick={() => setAddDialogOpen(true)}>
+        <h3 className="font-semibold text-white text-sm">Nostr Wallet Connect</h3>
+        <Button 
+          size="sm" 
+          onClick={() => setAddDialogOpen(true)}
+          className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-semibold"
+        >
           <Plus className="h-4 w-4 mr-1" />
           Add
         </Button>
       </div>
       {/* Connected Wallets List */}
       {connections.length === 0 ? (
-        <div className="text-center py-6 text-muted-foreground">
-          <p className="text-sm">No wallets connected</p>
+        <div className="text-center py-8 bg-slate-900/20 backdrop-blur-sm border border-dashed border-slate-700/50 rounded-lg">
+          <WalletMinimal className="h-10 w-10 mx-auto mb-3 text-slate-600" />
+          <p className="text-sm text-slate-400 font-medium">No wallets connected</p>
+          <p className="text-xs text-slate-500 mt-1">Add a wallet to start sending zaps</p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {connections.map((connection) => {
             const info = connectionInfo[connection.connectionString];
             const isActive = activeConnection === connection.connectionString;
             return (
-              <div key={connection.connectionString} className={`flex items-center justify-between p-3 border rounded-lg ${isActive ? 'ring-2 ring-primary' : ''}`}>
+              <div 
+                key={connection.connectionString} 
+                className={`
+                  flex items-center justify-between p-4 rounded-lg backdrop-blur-sm transition-all
+                  ${isActive 
+                    ? 'bg-gradient-to-r from-teal-500/20 to-cyan-500/20 border-2 border-teal-500/40 shadow-lg shadow-teal-500/10' 
+                    : 'bg-slate-900/40 border border-slate-700/50 hover:bg-slate-900/60'
+                  }
+                `}
+              >
                 <div className="flex items-center gap-3">
-                  <WalletMinimal className="h-4 w-4 text-muted-foreground" />
+                  <div className={`p-2 rounded-lg ${
+                    isActive 
+                      ? 'bg-teal-500/30' 
+                      : 'bg-slate-800/50'
+                  }`}>
+                    <WalletMinimal className={`h-4 w-4 ${
+                      isActive ? 'text-teal-300' : 'text-slate-400'
+                    }`} />
+                  </div>
                   <div>
-                    <p className="text-sm font-medium">
+                    <p className="text-sm font-semibold text-white">
                       {connection.alias || info?.alias || 'Lightning Wallet'}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-slate-400">
                       NWC Connection
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {isActive && <CheckCircle className="h-4 w-4 text-green-600" />}
+                <div className="flex items-center gap-1">
+                  {isActive && <CheckCircle className="h-4 w-4 text-green-400" />}
                   {!isActive && (
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={() => handleSetActive(connection.connectionString)}
+                      className="h-8 w-8 p-0 hover:bg-teal-500/20 hover:text-teal-300"
                     >
-                      <Zap className="h-3 w-3" />
+                      <Zap className="h-4 w-4" />
                     </Button>
                   )}
                   <Button
                     size="sm"
                     variant="ghost"
                     onClick={() => handleRemoveConnection(connection.connectionString)}
+                    className="h-8 w-8 p-0 hover:bg-red-500/20 hover:text-red-300"
                   >
-                    <Trash2 className="h-3 w-3" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -192,10 +240,14 @@ const WalletContent = forwardRef<HTMLDivElement, {
     {/* Help */}
     {!webln && connections.length === 0 && (
       <>
-        <Separator />
-        <div className="text-center py-4 space-y-2">
-          <p className="text-sm text-muted-foreground">
-            Install a WebLN extension or connect a NWC wallet for zaps.
+        <Separator className="bg-slate-700/50" />
+        <div className="text-center py-6 px-4 bg-slate-900/20 backdrop-blur-sm rounded-lg border border-slate-700/30">
+          <Zap className="h-8 w-8 mx-auto mb-3 text-slate-600" />
+          <p className="text-sm text-slate-300 font-medium mb-1">
+            No Lightning Wallet Connected
+          </p>
+          <p className="text-xs text-slate-400">
+            Install a WebLN extension or connect a NWC wallet to send zaps.
           </p>
         </div>
       </>
@@ -274,10 +326,10 @@ export function WalletModal({ children, className }: WalletModalProps) {
 
   const addWalletDialog = (
     <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-[#0a1f2e]/95 via-[#0d2838]/95 to-[#0a1f2e]/95 backdrop-blur-2xl border-teal-700/30">
         <DialogHeader>
-          <DialogTitle>Connect NWC Wallet</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-white">Connect NWC Wallet</DialogTitle>
+          <DialogDescription className="text-teal-200/60">
             Enter your connection string from a compatible wallet.
           </DialogDescription>
         </DialogHeader>
@@ -291,7 +343,7 @@ export function WalletModal({ children, className }: WalletModalProps) {
           <Button
             onClick={handleAddConnection}
             disabled={isConnecting || !connectionUri.trim()}
-            className="w-full"
+            className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-semibold"
           >
             {isConnecting ? 'Connecting...' : 'Connect'}
           </Button>
@@ -312,33 +364,33 @@ export function WalletModal({ children, className }: WalletModalProps) {
               </Button>
             )}
           </DrawerTrigger>
-          <DrawerContent className="h-full">
-            <DrawerHeader className="text-center relative">
+          <DrawerContent className="h-full bg-gradient-to-br from-[#0a1f2e]/95 via-[#0d2838]/95 to-[#0a1f2e]/95 backdrop-blur-2xl border-teal-700/30">
+            <DrawerHeader className="text-center relative border-b border-teal-700/30">
               <DrawerClose asChild>
-                <Button variant="ghost" size="sm" className="absolute right-4 top-4">
+                <Button variant="ghost" size="sm" className="absolute right-4 top-4 text-teal-300/70 hover:text-white hover:bg-teal-800/30">
                   <X className="h-4 w-4" />
                   <span className="sr-only">Close</span>
                 </Button>
               </DrawerClose>
-              <DrawerTitle className="flex items-center justify-center gap-2 pt-2">
-                <Wallet className="h-5 w-5" />
+              <DrawerTitle className="flex items-center justify-center gap-2 pt-2 text-white">
+                <Wallet className="h-5 w-5 text-teal-400" />
                 Lightning Wallet
               </DrawerTitle>
-              <DrawerDescription>
+              <DrawerDescription className="text-teal-200/60">
                 Connect your lightning wallet to send zaps instantly.
               </DrawerDescription>
             </DrawerHeader>
-            <div className="overflow-y-auto">
+            <div className="overflow-y-auto bg-[#0a1f2e]/40 wallet-scroll">
               <WalletContent {...walletContentProps} />
             </div>
           </DrawerContent>
         </Drawer>
         {/* Render Add Wallet as a separate Drawer for mobile */}
         <Drawer open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle>Connect NWC Wallet</DrawerTitle>
-              <DrawerDescription>
+          <DrawerContent className="bg-gradient-to-br from-[#0a1f2e]/95 via-[#0d2838]/95 to-[#0a1f2e]/95 backdrop-blur-2xl border-teal-700/30">
+            <DrawerHeader className="border-b border-slate-700/50">
+              <DrawerTitle className="text-white">Connect NWC Wallet</DrawerTitle>
+              <DrawerDescription className="text-slate-400">
                 Enter your connection string from a compatible wallet.
               </DrawerDescription>
             </DrawerHeader>
@@ -352,7 +404,7 @@ export function WalletModal({ children, className }: WalletModalProps) {
               <Button
                 onClick={handleAddConnection}
                 disabled={isConnecting || !connectionUri.trim()}
-                className="w-full"
+                className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-semibold"
               >
                 {isConnecting ? 'Connecting...' : 'Connect'}
               </Button>
@@ -374,13 +426,13 @@ export function WalletModal({ children, className }: WalletModalProps) {
             </Button>
           )}
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto bg-gradient-to-br from-[#0a1f2e]/95 via-[#0d2838]/95 to-[#0a1f2e]/95 backdrop-blur-2xl border-teal-700/30">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Wallet className="h-5 w-5" />
+            <DialogTitle className="flex items-center gap-2 text-white">
+              <Wallet className="h-5 w-5 text-teal-400" />
               Lightning Wallet
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-teal-200/60">
               Connect your lightning wallet to send zaps instantly.
             </DialogDescription>
           </DialogHeader>
