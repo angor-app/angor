@@ -4,7 +4,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createHead, UnheadProvider } from '@unhead/react/client';
 import { InferSeoMetaPlugin } from '@unhead/addons';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
+import { OverlayScrollbars } from 'overlayscrollbars';
 import NostrProvider from '@/components/NostrProvider';
 import { NostrSync } from '@/components/NostrSync';
 import { Toaster } from "@/components/ui/toaster";
@@ -44,6 +45,22 @@ const defaultConfig: AppConfig = {
 };
 
 export function App() {
+  useEffect(() => {
+    // Initialize OverlayScrollbars on body
+    const osInstance = OverlayScrollbars(document.body, {
+      scrollbars: {
+        theme: 'os-theme-dark',
+        visibility: 'auto',
+        autoHide: 'leave',
+        autoHideDelay: 800,
+      },
+    });
+
+    return () => {
+      osInstance.destroy();
+    };
+  }, []);
+
   return (
     <UnheadProvider head={head}>
       <AppProvider storageKey="nostr:app-config" defaultConfig={defaultConfig}>

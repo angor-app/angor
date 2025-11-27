@@ -1,3 +1,5 @@
+@import 'overlayscrollbars/overlayscrollbars.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -111,5 +113,48 @@
     );
     -webkit-backdrop-filter: blur(2px);
     backdrop-filter: blur(2px);
+  }
+
+  /* Custom OverlayScrollbars theme for dark teal design */
+  .os-theme-dark > .os-scrollbar > .os-scrollbar-track > .os-scrollbar-handle {
+    background: rgba(20, 184, 166, 0.6);
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .os-theme-dark > .os-scrollbar > .os-scrollbar-track > .os-scrollbar-handle:hover {
+    background: rgba(20, 184, 166, 0.8);
+  }
+
+  .os-theme-dark > .os-scrollbar > .os-scrollbar-track > .os-scrollbar-handle:active {
+    background: rgba(20, 184, 166, 1);
+  }
+
+  .os-theme-dark > .os-scrollbar-vertical {
+    width: 12px;
+    right: 2px;
+  }
+
+  .os-theme-dark > .os-scrollbar-horizontal {
+    height: 12px;
+    bottom: 2px;
+  }
+
+  .os-theme-dark > .os-scrollbar > .os-scrollbar-track {
+    background: rgba(15, 40, 51, 0.5);
+    border-radius: 8px;
+  }
+
+  /* Light mode variant */
+  :root:not(.dark) .os-theme-dark > .os-scrollbar > .os-scrollbar-track > .os-scrollbar-handle {
+    background: rgba(59, 130, 246, 0.4);
+  }
+
+  :root:not(.dark) .os-theme-dark > .os-scrollbar > .os-scrollbar-track > .os-scrollbar-handle:hover {
+    background: rgba(59, 130, 246, 0.6);
+  }
+
+  :root:not(.dark) .os-theme-dark > .os-scrollbar > .os-scrollbar-track > .os-scrollbar-handle:active {
+    background: rgba(59, 130, 246, 0.8);
   }
 }
