@@ -10,7 +10,7 @@ interface AddressBalance {
   txCount: number;
 }
 
-interface AddressUTXO {
+export interface AddressUTXO {
   txid: string;
   vout: number;
   value: number; // in satoshis
@@ -84,12 +84,22 @@ async function fetchAddressUTXOs(
       }
 
       const data = await response.json();
-      return data.map((utxo: { txid: string; vout: number; value: number; status?: { block_height?: number; confirmed?: boolean; confirmations?: number } }) => ({
+      return data.map((utxo: { 
+        txid: string; 
+        vout: number; 
+        value: number; 
+        status?: { 
+          confirmed?: boolean; 
+          block_height?: number; 
+          block_hash?: string;
+          block_time?: number;
+        } 
+      }) => ({
         txid: utxo.txid,
         vout: utxo.vout,
         value: utxo.value,
         height: utxo.status?.block_height || 0,
-        confirmations: utxo.status?.confirmed ? utxo.status.confirmations || 0 : 0,
+        confirmations: utxo.status?.confirmed ? 1 : 0, // Mempool API doesn't return confirmations directly
       }));
     } catch (error) {
       console.warn(`Failed to fetch UTXOs from ${indexer}:`, error);

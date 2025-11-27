@@ -55,6 +55,7 @@
     "crypto-js": "^4.2.0",
     "date-fns": "^3.6.0",
     "decimal.js": "^10.6.0",
+    "ecpair": "^3.0.0",
     "embla-carousel-react": "^8.3.0",
     "idb": "^8.0.3",
     "input-otp": "^1.2.4",
@@ -84,7 +85,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/bitcoinjs-lib": "^4.0.1",
-    "@types/node": "^22.5.5",
+    "@types/node": "^22.19.1",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
@@ -101,6 +102,8 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^6.3.5",
+    "vite-plugin-top-level-await": "^1.6.0",
+    "vite-plugin-wasm": "^3.5.0",
     "vitest": "^3.1.4"
   }
 }

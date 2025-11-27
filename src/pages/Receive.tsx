@@ -156,7 +156,7 @@ const Receive = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0a1f2e] via-[#0d2838] to-[#0a1f2e] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#0a1f2e] via-[#0d2838] to-[#0a1f2e] flex items-center justify-center p-4 pb-40">
         <Card className="max-w-md w-full bg-[#1a3d4d]/50 border-teal-700/40 backdrop-blur-xl">
           <CardContent className="pt-6 text-center">
             <p className="text-white mb-4">Please log in to receive Bitcoin</p>
@@ -172,7 +172,7 @@ const Receive = () => {
 
   if (!hasWallet) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0a1f2e] via-[#0d2838] to-[#0a1f2e] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#0a1f2e] via-[#0d2838] to-[#0a1f2e] flex items-center justify-center p-4 pb-40">
         <Card className="max-w-md w-full bg-[#1a3d4d]/50 border-teal-700/40 backdrop-blur-xl">
           <CardContent className="pt-6 text-center">
             <p className="text-white mb-4">No wallet found. Please create or recover a wallet first.</p>
@@ -187,7 +187,7 @@ const Receive = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a1f2e] via-[#0d2838] to-[#0a1f2e] p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a1f2e] via-[#0d2838] to-[#0a1f2e] p-4 pb-40 md:p-8 md:pb-32">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -305,7 +305,7 @@ const Receive = () => {
                     {/* Optional Amount */}
                     <div className="space-y-2">
                       <Label htmlFor="amount" className="text-teal-100">
-                        Amount (BTC) - Optional
+                        Amount ({config.network === 'testnet' ? 'tBTC' : 'BTC'}) - Optional
                       </Label>
                       <Input
                         id="amount"

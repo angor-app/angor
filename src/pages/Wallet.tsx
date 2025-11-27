@@ -80,7 +80,7 @@ const Wallet = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen relative overflow-hidden pb-24">
+      <div className="min-h-screen relative overflow-hidden pb-32">
         <div className="fixed inset-0 z-0 dashboard-background">
           <div className="absolute inset-0 dashboard-overlay" />
         </div>
@@ -104,7 +104,7 @@ const Wallet = () => {
 
   if (walletLoading || isLoadingAccount) {
     return (
-      <div className="min-h-screen relative overflow-hidden pb-24">
+      <div className="min-h-screen relative overflow-hidden pb-32">
         <div className="fixed inset-0 z-0 dashboard-background">
           <div className="absolute inset-0 dashboard-overlay" />
         </div>
@@ -122,7 +122,7 @@ const Wallet = () => {
 
   if (!hasWallet) {
     return (
-      <div className="min-h-screen relative overflow-hidden pb-24">
+      <div className="min-h-screen relative overflow-hidden pb-32">
         <div className="fixed inset-0 z-0 dashboard-background">
           <div className="absolute inset-0 dashboard-overlay" />
         </div>
@@ -197,7 +197,7 @@ const Wallet = () => {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden pb-24">
+    <div className="min-h-screen relative overflow-hidden pb-32">
       <div className="fixed inset-0 z-0 dashboard-background">
         <div className="absolute inset-0 dashboard-overlay" />
       </div>
@@ -239,7 +239,7 @@ const Wallet = () => {
                   </div>
                 ) : (
                   <h2 className="text-5xl font-bold text-white mb-6">
-                    {balanceData?.totalBalanceBTC?.toFixed(8) || '0.00000000'} BTC
+                    {balanceData?.totalBalanceBTC?.toFixed(8) || '0.00000000'} {config.network === 'testnet' ? 'tBTC' : 'BTC'}
                   </h2>
                 )}
                 <p className="text-teal-100/60 text-lg">
