@@ -2,8 +2,10 @@ import { useSeoMeta } from '@unhead/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, Users, Clock, Target, ArrowRight } from 'lucide-react';
+import { TrendingUp, Users, Clock, Target, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { Dock } from '@/components/Dock';
 
 interface ProjectCardData {
   id: string;
@@ -123,11 +125,22 @@ const Projects = () => {
     : mockProjects.filter(p => p.status === filter);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-8 py-12">
+    <div className="min-h-screen relative overflow-hidden pb-24">
+      <div className="fixed inset-0 z-0 dashboard-background">
+        <div className="absolute inset-0 dashboard-overlay" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Browse Projects</h1>
-          <p className="text-muted-foreground text-lg">
+          <Button asChild variant="ghost" className="text-white hover:bg-white/10 mb-4">
+            <Link to="/">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Home
+            </Link>
+          </Button>
+
+          <h1 className="text-4xl font-bold text-white mb-2">Browse Projects</h1>
+          <p className="text-teal-100/70 text-lg">
             Discover innovative Bitcoin projects seeking funding
           </p>
         </div>
@@ -162,10 +175,10 @@ const Projects = () => {
         </div>
 
         {filteredProjects.length === 0 && (
-          <Card className="border-dashed">
+          <Card className="bg-[#1a3d4d]/50 border-teal-700/40 backdrop-blur-xl border-dashed">
             <CardContent className="py-12 px-8 text-center">
               <div className="max-w-sm mx-auto space-y-4">
-                <p className="text-muted-foreground">
+                <p className="text-teal-100/60">
                   No projects found matching your filter.
                 </p>
               </div>
@@ -173,6 +186,8 @@ const Projects = () => {
           </Card>
         )}
       </div>
+
+      <Dock />
     </div>
   );
 };
