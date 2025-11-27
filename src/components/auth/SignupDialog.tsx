@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Download, Key, UserPlus, FileText, Shield, User, Sparkles, LogIn, CheckCircle, Upload, Globe } from 'lucide-react';
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,6 +14,7 @@ import { useLoginActions } from '@/hooks/useLoginActions';
 import { useNostrPublish } from '@/hooks/useNostrPublish';
 import { useUploadFile } from '@/hooks/useUploadFile';
 import { generateSecretKey, nip19 } from 'nostr-tools';
+import { scrollbarOptions } from '@/lib/scrollbars';
 import { cn } from '@/lib/utils';
 
 interface SignupDialogProps {
@@ -294,42 +296,43 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className={cn("max-w-[95vw] sm:max-w-md max-h-[90vh] max-h-[90dvh] p-0 overflow-hidden rounded-2xl flex flex-col")}
+        className={cn("max-w-[95vw] sm:max-w-md max-h-[90dvh] p-0 overflow-hidden rounded-2xl flex flex-col bg-gradient-to-br from-[#0f2833] to-[#1a3d4d] border-[#1a3d4d]/50")}
       >
         <DialogHeader className={cn('px-6 pt-6 pb-1 relative flex-shrink-0')}>
-          <DialogTitle className={cn('font-semibold text-center text-lg')}>
+          <DialogTitle className={cn('font-semibold text-center text-lg text-teal-100')}>
             {getTitle()}
           </DialogTitle>
         </DialogHeader>
-        <div className='px-6 pt-2 pb-4 space-y-4 overflow-y-scroll flex-1'>
+        <OverlayScrollbarsComponent options={scrollbarOptions} defer>
+          <div className='px-6 pt-2 pb-4 space-y-4 max-h-[calc(90vh-120px)]'>
           {/* Welcome Step - New engaging introduction */}
           {step === 'welcome' && (
             <div className='text-center space-y-4'>
               {/* Hero illustration */}
-              <div className='relative p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/50 dark:to-indigo-950/50'>
+              <div className='relative p-6 rounded-2xl bg-gradient-to-br from-teal-900/40 to-cyan-900/40 backdrop-blur-sm border border-teal-500/30'>
                 <div className='flex justify-center items-center space-x-4 mb-3'>
                   <div className='relative'>
-                    <UserPlus className='w-12 h-12 text-blue-600' />
-                    <Sparkles className='w-4 h-4 text-yellow-500 absolute -top-1 -right-1 animate-pulse' />
+                    <UserPlus className='w-12 h-12 text-teal-400' />
+                    <Sparkles className='w-4 h-4 text-yellow-400 absolute -top-1 -right-1 animate-pulse' />
                   </div>
-                  <Globe className='w-16 h-16 text-blue-700 animate-spin-slow' />
+                  <Globe className='w-16 h-16 text-teal-300 animate-spin-slow' />
                   <div className='relative'>
-                    <FileText className='w-12 h-12 text-blue-600' />
-                    <Sparkles className='w-4 h-4 text-yellow-500 absolute -top-1 -left-1 animate-pulse' style={{animationDelay: '0.3s'}} />
+                    <FileText className='w-12 h-12 text-teal-400' />
+                    <Sparkles className='w-4 h-4 text-yellow-400 absolute -top-1 -left-1 animate-pulse' style={{animationDelay: '0.3s'}} />
                   </div>
                 </div>
 
                 {/* Benefits */}
                 <div className='grid grid-cols-1 gap-2 text-sm'>
-                  <div className='flex items-center justify-center gap-2 text-blue-700 dark:text-blue-300'>
+                  <div className='flex items-center justify-center gap-2 text-teal-200'>
                     <Shield className='w-4 h-4' />
                     Decentralized and censorship-resistant
                   </div>
-                  <div className='flex items-center justify-center gap-2 text-blue-700 dark:text-blue-300'>
+                  <div className='flex items-center justify-center gap-2 text-teal-200'>
                     <User className='w-4 h-4' />
                     You are in control of your data
                   </div>
-                  <div className='flex items-center justify-center gap-2 text-blue-700 dark:text-blue-300'>
+                  <div className='flex items-center justify-center gap-2 text-teal-200'>
                     <Globe className='w-4 h-4' />
                     Join a global network
                   </div>
@@ -338,7 +341,7 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
 
               <div className='space-y-3'>
                 <Button
-                  className='w-full rounded-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transform transition-all duration-200 hover:scale-105 shadow-lg'
+                  className='w-full rounded-full py-6 text-lg font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 transform transition-all duration-200 hover:scale-105 shadow-lg text-white'
                   onClick={() => setStep('generate')}
                 >
                   <LogIn className='w-5 h-5 mr-2' />
@@ -351,7 +354,7 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
           {/* Generate Step - Enhanced with animations */}
           {step === 'generate' && (
             <div className='text-center space-y-4'>
-              <div className='relative p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-100 dark:from-blue-950/50 dark:to-purple-950/50 overflow-hidden'>
+              <div className='relative p-6 rounded-2xl bg-gradient-to-br from-teal-900/40 to-cyan-900/40 backdrop-blur-sm border border-teal-500/30 overflow-hidden'>
                 {/* Animated background elements */}
                 {showSparkles && (
                   <div className='absolute inset-0'>
@@ -390,12 +393,12 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
                     </div>
                   ) : (
                     <div className='space-y-3'>
-                      <Key className='w-20 h-20 text-primary mx-auto' />
+                      <Key className='w-20 h-20 text-teal-400 mx-auto' />
                       <div className='space-y-2'>
-                        <p className='text-lg font-semibold'>
+                        <p className='text-lg font-semibold text-teal-100'>
                           Ready to generate your secret key?
                         </p>
-                        <p className='text-sm text-muted-foreground px-5'>
+                        <p className='text-sm text-teal-200 px-5'>
                           This key will be your password to access applications within the Nostr network.
                         </p>
 
@@ -407,7 +410,7 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
 
               {!isLoading && (
                 <Button
-                  className='w-full rounded-full py-6 text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transform transition-all duration-200 hover:scale-105 shadow-lg'
+                  className='w-full rounded-full py-6 text-lg font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 transform transition-all duration-200 hover:scale-105 shadow-lg text-white'
                   onClick={generateKey}
                   disabled={isLoading}
                 >
@@ -422,7 +425,7 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
           {step === 'download' && (
             <div className='text-center space-y-4'>
               {/* Key reveal */}
-              <div className='relative p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/50 dark:to-indigo-950/50 overflow-hidden'>
+              <div className='relative p-6 rounded-2xl bg-gradient-to-br from-teal-900/40 to-cyan-900/40 backdrop-blur-sm border border-teal-500/30 overflow-hidden'>
                 {/* Sparkles */}
                 <div className='absolute inset-0 pointer-events-none'>
                   <Sparkles className='absolute top-3 left-4 w-3 h-3 text-yellow-400 animate-pulse' style={{animationDelay: '0s'}} />
@@ -433,17 +436,17 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
 
                 <div className='relative z-10 flex justify-center items-center mb-3'>
                   <div className='relative'>
-                    <div className='w-16 h-16 bg-gradient-to-br from-blue-200 to-indigo-300 rounded-full flex items-center justify-center shadow-lg animate-pulse'>
-                      <Key className='w-8 h-8 text-indigo-800' />
+                    <div className='w-16 h-16 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-full flex items-center justify-center shadow-lg animate-pulse'>
+                      <Key className='w-8 h-8 text-teal-900' />
                     </div>
-                    <div className='absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center animate-bounce'>
+                    <div className='absolute -top-1 -right-1 w-5 h-5 bg-teal-500 rounded-full flex items-center justify-center animate-bounce'>
                       <Sparkles className='w-3 h-3 text-white' />
                     </div>
                   </div>
                 </div>
 
                 <div className='relative z-10 space-y-2'>
-                  <p className='text-base font-semibold'>
+                  <p className='text-base font-semibold text-teal-100'>
                     Your secret key has been generated!
                   </p>
 
@@ -549,7 +552,7 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
           {step === 'profile' && (
             <div className='text-center space-y-4'>
               {/* Profile setup illustration */}
-              <div className='relative p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/50 dark:to-indigo-950/50 overflow-hidden'>
+              <div className='relative p-6 rounded-2xl bg-gradient-to-br from-teal-900/40 to-cyan-900/40 backdrop-blur-sm border border-teal-500/30 overflow-hidden'>
                 {/* Sparkles */}
                 <div className='absolute inset-0 pointer-events-none'>
                   <Sparkles className='absolute top-3 left-4 w-3 h-3 text-yellow-400 animate-pulse' style={{animationDelay: '0s'}} />
@@ -559,21 +562,21 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
 
                 <div className='relative z-10 flex justify-center items-center mb-3'>
                   <div className='relative'>
-                    <div className='w-16 h-16 bg-gradient-to-br from-blue-200 to-indigo-300 rounded-full flex items-center justify-center shadow-lg'>
-                      <User className='w-8 h-8 text-blue-800' />
+                    <div className='w-16 h-16 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-full flex items-center justify-center shadow-lg'>
+                      <User className='w-8 h-8 text-teal-900' />
                     </div>
-                    <div className='absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center animate-bounce'>
+                    <div className='absolute -top-1 -right-1 w-5 h-5 bg-teal-500 rounded-full flex items-center justify-center animate-bounce'>
                       <Sparkles className='w-3 h-3 text-white' />
                     </div>
                   </div>
                 </div>
 
                 <div className='relative z-10 space-y-2'>
-                  <p className='text-base font-semibold'>
+                  <p className='text-base font-semibold text-teal-100'>
                     Almost there! Let's set up your profile
                   </p>
 
-                  <p className='text-sm text-muted-foreground'>
+                  <p className='text-sm text-teal-200'>
                     Your profile is your identity on Nostr.
                   </p>
                 </div>
@@ -581,10 +584,10 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
 
               {/* Publishing status indicator */}
               {isPublishing && (
-                <div className='relative p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-200 dark:border-blue-800'>
+                <div className='relative p-4 rounded-xl bg-teal-900/40 backdrop-blur-sm border border-teal-500/30'>
                   <div className='flex items-center justify-center gap-3'>
-                    <div className='w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin' />
-                    <span className='text-sm font-medium text-blue-700 dark:text-blue-300'>
+                    <div className='w-5 h-5 border-2 border-teal-400 border-t-transparent rounded-full animate-spin' />
+                    <span className='text-sm font-medium text-teal-200'>
                       Publishing your profile...
                     </span>
                   </div>
@@ -594,7 +597,7 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
               {/* Profile form */}
               <div className={`space-y-4 text-left ${isPublishing ? 'opacity-50 pointer-events-none' : ''}`}>
                 <div className='space-y-2'>
-                  <label htmlFor='profile-name' className='text-sm font-medium'>
+                  <label htmlFor='profile-name' className='text-sm font-medium text-teal-200'>
                     Display Name
                   </label>
                   <Input
@@ -602,13 +605,13 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
                     value={profileData.name}
                     onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
                     placeholder='Your name'
-                    className='rounded-lg'
+                    className='rounded-lg bg-teal-950/50 border-teal-700/50 text-teal-100 placeholder:text-teal-400/50 focus-visible:ring-teal-500'
                     disabled={isPublishing}
                   />
                 </div>
 
                 <div className='space-y-2'>
-                  <label htmlFor='profile-about' className='text-sm font-medium'>
+                  <label htmlFor='profile-about' className='text-sm font-medium text-teal-200'>
                     Bio
                   </label>
                   <Textarea
@@ -616,14 +619,14 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
                     value={profileData.about}
                     onChange={(e) => setProfileData(prev => ({ ...prev, about: e.target.value }))}
                     placeholder='Tell others about yourself...'
-                    className='rounded-lg resize-none'
+                    className='rounded-lg resize-none bg-teal-950/50 border-teal-700/50 text-teal-100 placeholder:text-teal-400/50 focus-visible:ring-teal-500'
                     rows={3}
                     disabled={isPublishing}
                   />
                 </div>
 
                 <div className='space-y-2'>
-                  <label htmlFor='profile-picture' className='text-sm font-medium'>
+                  <label htmlFor='profile-picture' className='text-sm font-medium text-teal-200'>
                     Avatar
                   </label>
                   <div className='flex gap-2'>
@@ -632,7 +635,7 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
                       value={profileData.picture}
                       onChange={(e) => setProfileData(prev => ({ ...prev, picture: e.target.value }))}
                       placeholder='https://example.com/your-avatar.jpg'
-                      className='rounded-lg flex-1'
+                      className='rounded-lg flex-1 bg-teal-950/50 border-teal-700/50 text-teal-100 placeholder:text-teal-400/50 focus-visible:ring-teal-500'
                       disabled={isPublishing}
                     />
                     <input
@@ -641,6 +644,7 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
                       className='hidden'
                       ref={avatarFileInputRef}
                       onChange={handleAvatarUpload}
+                      aria-label="Upload avatar image"
                     />
                     <Button
                       type='button'
@@ -664,7 +668,7 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
               {/* Action buttons */}
               <div className='space-y-3'>
                 <Button
-                  className='w-full rounded-full py-4 text-base font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transform transition-all duration-200 hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none'
+                  className='w-full rounded-full py-4 text-base font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 transform transition-all duration-200 hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-white'
                   onClick={() => finishSignup(false)}
                   disabled={isPublishing || isUploading}
                 >
@@ -683,7 +687,7 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
 
                 <Button
                   variant='outline'
-                  className='w-full rounded-full py-3 disabled:opacity-50 disabled:cursor-not-allowed'
+                  className='w-full rounded-full py-3 disabled:opacity-50 disabled:cursor-not-allowed border-teal-600/50 text-teal-200 hover:bg-teal-900/50 hover:text-teal-100'
                   onClick={() => finishSignup(true)}
                   disabled={isPublishing || isUploading}
                 >
@@ -699,7 +703,8 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
               </div>
             </div>
           )}
-        </div>
+          </div>
+        </OverlayScrollbarsComponent>
       </DialogContent>
     </Dialog>
   );

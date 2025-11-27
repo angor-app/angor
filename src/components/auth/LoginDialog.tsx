@@ -3,12 +3,14 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Shield, Upload, AlertTriangle, UserPlus, KeyRound, Sparkles, Cloud } from 'lucide-react';
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useLoginActions } from '@/hooks/useLoginActions';
+import { scrollbarOptions } from '@/lib/scrollbars';
 import { cn } from '@/lib/utils';
 
 interface LoginDialogProps {
@@ -182,30 +184,30 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className={cn("max-w-[95vw] sm:max-w-md max-h-[90vh] max-h-[90dvh] p-0 overflow-hidden rounded-2xl overflow-y-scroll")}
+        className={cn("max-w-[95vw] sm:max-w-md max-h-[90dvh] p-0 overflow-hidden rounded-2xl bg-gradient-to-br from-[#0f2833] to-[#1a3d4d] border-[#1a3d4d]/50")}
       >
         <DialogHeader className={cn('px-6 pt-6 pb-1 relative')}>
-
-            <DialogDescription className="text-center">
+            <DialogDescription className="text-center text-teal-100">
               Sign up or log in to continue
             </DialogDescription>
         </DialogHeader>
-        <div className='px-6 pt-2 pb-4 space-y-4 overflow-y-auto flex-1'>
+        <OverlayScrollbarsComponent options={scrollbarOptions} defer>
+          <div className='px-6 pt-2 pb-4 space-y-4 max-h-[calc(90vh-120px)]'>
           {/* Prominent Sign Up Section */}
-          <div className='relative p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/50 dark:to-indigo-950/50 border border-blue-200 dark:border-blue-800 overflow-hidden'>
+          <div className='relative p-4 rounded-2xl bg-gradient-to-br from-teal-900/40 to-cyan-900/40 backdrop-blur-sm border border-teal-500/30 overflow-hidden'>
             <div className='relative z-10 text-center space-y-3'>
               <div className='flex justify-center items-center gap-2 mb-2'>
-                <Sparkles className='w-5 h-5 text-blue-600' />
-                <span className='font-semibold text-blue-800 dark:text-blue-200'>
+                <Sparkles className='w-5 h-5 text-teal-400' />
+                <span className='font-semibold text-teal-100'>
                   New to Nostr?
                 </span>
               </div>
-              <p className='text-sm text-blue-700 dark:text-blue-300'>
+              <p className='text-sm text-teal-200'>
                 Create a new account to get started. It's free and open.
               </p>
               <Button
                 onClick={handleSignupClick}
-                className='w-full rounded-full py-3 text-base font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transform transition-all duration-200 hover:scale-105 shadow-lg border-0'
+                className='w-full rounded-full py-3 text-base font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 transform transition-all duration-200 hover:scale-105 shadow-lg border-0 text-white'
               >
                 <UserPlus className='w-4 h-4 mr-2' />
                 <span>Sign Up</span>
@@ -216,10 +218,10 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
           {/* Divider */}
           <div className='relative'>
             <div className='absolute inset-0 flex items-center'>
-              <div className='w-full border-t border-gray-300 dark:border-gray-600'></div>
+              <div className='w-full border-t border-teal-700/50'></div>
             </div>
             <div className='relative flex justify-center text-sm'>
-              <span className='px-3 bg-background text-muted-foreground'>
+              <span className='px-3 bg-[#0f2833] text-teal-300'>
                 <span>Or log in</span>
               </span>
             </div>
@@ -227,35 +229,35 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
 
           {/* Login Methods */}
           <Tabs defaultValue={defaultTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-muted/80 rounded-lg mb-4">
-              <TabsTrigger value="extension" className="flex items-center gap-2">
+            <TabsList className="grid w-full grid-cols-3 bg-teal-900/40 backdrop-blur-sm rounded-lg mb-4 border border-teal-700/30">
+              <TabsTrigger value="extension" className="flex items-center gap-2 data-[state=active]:bg-teal-600 data-[state=active]:text-white">
                 <Shield className="w-4 h-4" />
                 <span>Extension</span>
               </TabsTrigger>
-              <TabsTrigger value="key" className="flex items-center gap-2">
+              <TabsTrigger value="key" className="flex items-center gap-2 data-[state=active]:bg-teal-600 data-[state=active]:text-white">
                 <KeyRound className="w-4 h-4" />
                 <span>Key</span>
               </TabsTrigger>
-              <TabsTrigger value="bunker" className="flex items-center gap-2">
+              <TabsTrigger value="bunker" className="flex items-center gap-2 data-[state=active]:bg-teal-600 data-[state=active]:text-white">
                 <Cloud className="w-4 h-4" />
                 <span>Bunker</span>
               </TabsTrigger>
             </TabsList>
-            <TabsContent value='extension' className='space-y-3 bg-muted'>
+            <TabsContent value='extension' className='space-y-3'>
               {errors.extension && (
-                <Alert variant="destructive">
+                <Alert variant="destructive" className="bg-red-950/50 border-red-800/50 text-red-200">
                   <AlertTriangle className="h-4 w-4" />
                   <AlertDescription>{errors.extension}</AlertDescription>
                 </Alert>
               )}
-              <div className='text-center p-4 rounded-lg bg-gray-50 dark:bg-gray-800'>
-                <Shield className='w-12 h-12 mx-auto mb-3 text-primary' />
-                <p className='text-sm text-gray-600 dark:text-gray-300 mb-4'>
+              <div className='text-center p-4 rounded-lg bg-teal-900/30 backdrop-blur-sm border border-teal-700/30'>
+                <Shield className='w-12 h-12 mx-auto mb-3 text-teal-400' />
+                <p className='text-sm text-teal-200 mb-4'>
                   Login with one click using the browser extension
                 </p>
                 <div className="flex justify-center">
                   <Button
-                    className='w-full rounded-full py-4'
+                    className='w-full rounded-full py-4 bg-teal-600 hover:bg-teal-500 text-white'
                     onClick={handleExtensionLogin}
                     disabled={isLoading}
                   >
@@ -268,7 +270,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
             <TabsContent value='key' className='space-y-4'>
               <div className='space-y-4'>
                 <div className='space-y-2'>
-                  <label htmlFor='nsec' className='text-sm font-medium'>
+                  <label htmlFor='nsec' className='text-sm font-medium text-teal-200'>
                     Secret Key (nsec)
                   </label>
                   <Input
@@ -279,19 +281,19 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
                       setNsec(e.target.value);
                       if (errors.nsec) setErrors(prev => ({ ...prev, nsec: undefined }));
                     }}
-                    className={`rounded-lg ${
-                      errors.nsec ? 'border-red-500 focus-visible:ring-red-500' : ''
+                    className={`rounded-lg bg-teal-950/50 border-teal-700/50 text-teal-100 placeholder:text-teal-400/50 ${
+                      errors.nsec ? 'border-red-500 focus-visible:ring-red-500' : 'focus-visible:ring-teal-500'
                     }`}
                     placeholder='nsec1...'
                     autoComplete="off"
                   />
                   {errors.nsec && (
-                    <p className="text-sm text-red-500">{errors.nsec}</p>
+                    <p className="text-sm text-red-400">{errors.nsec}</p>
                   )}
                 </div>
 
                 <Button
-                  className='w-full rounded-full py-3'
+                  className='w-full rounded-full py-3 bg-teal-600 hover:bg-teal-500 text-white'
                   onClick={handleKeyLogin}
                   disabled={isLoading || !nsec.trim()}
                 >
@@ -316,10 +318,11 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
                     className='hidden'
                     ref={fileInputRef}
                     onChange={handleFileUpload}
+                    aria-label="Upload secret key file"
                   />
                   <Button
                     variant='outline'
-                    className='w-full'
+                    className='w-full border-teal-600/50 text-teal-200 hover:bg-teal-900/50 hover:text-teal-100'
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isLoading || isFileLoading}
                   >
@@ -327,15 +330,15 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
                     {isFileLoading ? 'Reading File...' : 'Upload Your Key File'}
                   </Button>
                   {errors.file && (
-                    <p className="text-sm text-red-500 mt-2">{errors.file}</p>
+                    <p className="text-sm text-red-400 mt-2">{errors.file}</p>
                   )}
                 </div>
               </div>
             </TabsContent>
 
-            <TabsContent value='bunker' className='space-y-3 bg-muted'>
+            <TabsContent value='bunker' className='space-y-3'>
               <div className='space-y-2'>
-                <label htmlFor='bunkerUri' className='text-sm font-medium text-gray-700 dark:text-gray-400'>
+                <label htmlFor='bunkerUri' className='text-sm font-medium text-teal-200'>
                   Bunker URI
                 </label>
                 <Input
@@ -345,20 +348,20 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
                     setBunkerUri(e.target.value);
                     if (errors.bunker) setErrors(prev => ({ ...prev, bunker: undefined }));
                   }}
-                  className={`rounded-lg border-gray-300 dark:border-gray-700 focus-visible:ring-primary ${
+                  className={`rounded-lg bg-teal-950/50 border-teal-700/50 text-teal-100 placeholder:text-teal-400/50 focus-visible:ring-teal-500 ${
                     errors.bunker ? 'border-red-500' : ''
                   }`}
                   placeholder='bunker://'
                   autoComplete="off"
                 />
                 {errors.bunker && (
-                  <p className="text-sm text-red-500">{errors.bunker}</p>
+                  <p className="text-sm text-red-400">{errors.bunker}</p>
                 )}
               </div>
 
               <div className="flex justify-center">
                 <Button
-                  className='w-full rounded-full py-4'
+                  className='w-full rounded-full py-4 bg-teal-600 hover:bg-teal-500 text-white'
                   onClick={handleBunkerLogin}
                   disabled={isLoading || !bunkerUri.trim()}
                 >
@@ -367,7 +370,8 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
               </div>
             </TabsContent>
           </Tabs>
-        </div>
+          </div>
+        </OverlayScrollbarsComponent>
       </DialogContent>
     </Dialog>
     );

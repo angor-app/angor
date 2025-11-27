@@ -32,14 +32,14 @@ export function LoginArea({ className }: LoginAreaProps) {
         <div className="flex gap-3 justify-center">
           <Button
             onClick={() => setLoginDialogOpen(true)}
-            className='flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-primary-foreground w-full font-medium transition-all hover:bg-primary/90 animate-scale-in'
+            className='flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-teal-500/80 to-cyan-500/80 backdrop-blur-xl border border-teal-400/30 text-white font-semibold transition-all hover:from-teal-400/90 hover:to-cyan-400/90 hover:scale-105 hover:shadow-lg hover:shadow-teal-500/30 animate-scale-in'
           >
             <User className='w-4 h-4' />
             <span className='truncate'>Log in</span>
-          </Button><Button
+          </Button>
+          <Button
             onClick={() => setSignupDialogOpen(true)}
-            variant="outline"
-            className="flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all"
+            className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white font-semibold transition-all hover:bg-white/20 hover:border-white/30 hover:scale-105 hover:shadow-lg"
           >
             <UserPlus className="w-4 h-4" />
             <span>Sign Up</span>
