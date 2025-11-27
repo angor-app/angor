@@ -180,27 +180,33 @@ const Send = () => {
       });
 
       // Prepare transaction inputs with address paths
-      // Since we fetched UTXOs for all addresses, we need to match each UTXO to its address
+      // Match each UTXO to its address from accountInfo
       const txInputs = utxos.map(utxo => {
-        // For now, use the first receive address
-        // In production, you would fetch the UTXO's address from the indexer response
-        const addressInfo = accountInfo.addresses.find(a => !a.change) || accountInfo.addresses[0];
+        // Find the address info that matches this UTXO's address
+        const addressInfo = accountInfo.addresses.find(a => a.address === utxo.address);
 
         if (!addressInfo) {
-          throw new Error('Could not find address info for UTXO');
+          console.error('Could not find address info for UTXO:', utxo);
+          throw new Error(`Could not find address info for ${utxo.address}`);
         }
 
         console.log('UTXO input:', {
           txid: utxo.txid.substring(0, 10) + '...',
           vout: utxo.vout,
           value: utxo.value,
-          address: addressInfo.address,
+          address: utxo.address,
           path: addressInfo.path,
         });
 
         return {
-          utxo,
-          address: addressInfo.address,
+          utxo: {
+            txid: utxo.txid,
+            vout: utxo.vout,
+            value: utxo.value,
+            height: utxo.height,
+            confirmations: utxo.confirmations,
+          },
+          address: utxo.address,
           path: addressInfo.path,
         };
       });

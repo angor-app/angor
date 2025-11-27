@@ -13,7 +13,7 @@ import { WalletOperations } from '@/services/WalletOperations';
 import { AccountInfo } from '@/types/angor.types';
 import { toast } from '@/hooks/useToast';
 import { useAppContext } from '@/hooks/useAppContext';
-import { useAddressesBalance } from '@/hooks/useIndexer';
+import { useAddressesBalance, useAddressUTXOs } from '@/hooks/useIndexer';
 import { getAddressUrl } from '@/lib/networkConfig';
 
 const Wallet = () => {
@@ -33,6 +33,7 @@ const Wallet = () => {
   // Get all addresses from account info
   const allAddresses = accountInfo?.addresses.map(a => a.address) || [];
   const { data: balanceData, isLoading: isLoadingBalance } = useAddressesBalance(allAddresses);
+  const { data: utxos, isLoading: isLoadingUtxos } = useAddressUTXOs(allAddresses);
 
   const loadWalletAccount = useCallback(async () => {
     setIsLoadingAccount(true);
@@ -63,6 +64,17 @@ const Wallet = () => {
       loadWalletAccount();
     }
   }, [hasWallet, accountInfo, loadWalletAccount]);
+
+  // Log UTXOs when they change
+  useEffect(() => {
+    if (utxos) {
+      console.log('=== Wallet UTXOs ===');
+      console.log('Total UTXOs:', utxos.length);
+      console.log('UTXOs:', utxos);
+      console.log('Total value (sats):', utxos.reduce((sum, u) => sum + u.value, 0));
+      console.log('Total value (BTC):', utxos.reduce((sum, u) => sum + u.value, 0) / 100000000);
+    }
+  }, [utxos]);
 
   const handleWalletCreated = () => {
     loadWalletAccount();
@@ -312,6 +324,72 @@ const Wallet = () => {
                 </div>
               ) : (
                 <p className="text-teal-100/50 text-center py-4">Loading address...</p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* UTXOs */}
+          <Card className="bg-[#1a3d4d]/50 border-teal-700/40 backdrop-blur-xl">
+            <CardHeader>
+              <CardTitle className="text-white">Unspent Transaction Outputs (UTXOs)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingUtxos ? (
+                <div className="flex items-center justify-center py-8 gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin text-teal-400" />
+                  <span className="text-teal-100/70">Loading UTXOs...</span>
+                </div>
+              ) : utxos && utxos.length > 0 ? (
+                <div className="space-y-2">
+                  {utxos.map((utxo, index) => (
+                    <div 
+                      key={`${utxo.txid}-${utxo.vout}`}
+                      className="p-3 bg-white/5 rounded-lg border border-teal-700/20 hover:border-teal-700/40 transition-colors"
+                    >
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs text-teal-400 font-semibold">#{index + 1}</span>
+                            <span className="text-xs text-teal-100/60">
+                              {utxo.confirmations > 0 ? `${utxo.confirmations} confirmations` : 'Unconfirmed'}
+                            </span>
+                          </div>
+                          <div className="font-mono text-xs text-white/80 truncate" title={utxo.txid}>
+                            {utxo.txid.substring(0, 32)}...:{utxo.vout}
+                          </div>
+                          {'address' in utxo && (
+                            <div className="text-xs text-teal-300 mt-1 truncate" title={utxo.address}>
+                              {utxo.address}
+                            </div>
+                          )}
+                          {utxo.height > 0 && (
+                            <div className="text-xs text-teal-100/50 mt-1">
+                              Block: {utxo.height}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-semibold text-white">
+                            {(utxo.value / 100000000).toFixed(8)}
+                          </div>
+                          <div className="text-xs text-teal-100/60">
+                            {utxo.value.toLocaleString()} sats
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="pt-2 border-t border-teal-700/20">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-teal-100/70">Total UTXOs:</span>
+                      <span className="text-lg font-semibold text-white">{utxos.length}</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-teal-100/50">
+                  No UTXOs found. Send some Bitcoin to your address to get started.
+                </div>
               )}
             </CardContent>
           </Card>

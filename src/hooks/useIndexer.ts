@@ -166,6 +166,10 @@ export function useAddressesBalance(addresses: string[]) {
   });
 }
 
+export interface AddressUTXOWithAddress extends AddressUTXO {
+  address: string; // The address that owns this UTXO
+}
+
 /**
  * Hook to fetch UTXOs for multiple addresses
  */
@@ -177,7 +181,9 @@ export function useAddressUTXOs(addresses: string[]) {
     queryFn: async () => {
       if (!addresses || addresses.length === 0) return [];
       
-      const allUtxos: AddressUTXO[] = [];
+      const allUtxos: AddressUTXOWithAddress[] = [];
+      
+      console.log('Fetching UTXOs for addresses:', addresses);
       
       for (const address of addresses) {
         try {
@@ -186,11 +192,22 @@ export function useAddressUTXOs(addresses: string[]) {
             config.network,
             config.indexers?.map(i => i.url)
           );
-          allUtxos.push(...utxos);
+          
+          // Add address info to each UTXO
+          const utxosWithAddress = utxos.map(utxo => ({
+            ...utxo,
+            address,
+          }));
+          
+          console.log(`Fetched ${utxos.length} UTXOs for ${address}:`, utxosWithAddress);
+          
+          allUtxos.push(...utxosWithAddress);
         } catch (error) {
           console.error(`Failed to fetch UTXOs for ${address}:`, error);
         }
       }
+      
+      console.log(`Total UTXOs fetched: ${allUtxos.length}`);
       
       return allUtxos;
     },
