@@ -58,7 +58,7 @@ function ProjectCard({ project }: { project: ProjectCardData }) {
 
   return (
     <Card className="bg-card/50 border-border/50 backdrop-blur-sm hover:bg-card/70 transition-all duration-300 overflow-hidden group">
-      <div className="h-48 bg-gradient-to-br from-teal-500/20 to-cyan-600/20 relative overflow-hidden">
+      <div className="h-48 bg-gradient-to-br from-teal-900/40 to-cyan-900/40 relative overflow-hidden backdrop-blur-sm">
         <div className="absolute inset-0 bg-[url('/images/back.jpeg')] opacity-10 bg-cover bg-center" />
         <div className="absolute top-4 right-4">
           <Badge 

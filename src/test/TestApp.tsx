@@ -23,6 +23,16 @@ export function TestApp({ children }: TestAppProps) {
 
   const defaultConfig: AppConfig = {
     theme: 'light',
+    network: 'testnet',
+    explorers: [
+      { url: 'https://signet.angor.online', isDefault: true },
+    ],
+    indexers: [
+      { url: 'https://signet.angor.online', status: 'online', isDefault: true },
+    ],
+    nostrRelays: [
+      { url: 'wss://relay.angor.io', name: 'strfry default', status: 'online' },
+    ],
     relayMetadata: {
       relays: [
         { url: 'wss://relay.nostr.band', read: true, write: true },

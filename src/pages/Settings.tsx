@@ -3,10 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Globe, Zap, Bell, Shield, Palette } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, Globe, Bell, Shield, Palette } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Dock } from '@/components/Dock';
 import { useTheme } from '@/hooks/useTheme';
+import { useAppContext } from '@/hooks/useAppContext';
+import type { BitcoinNetwork } from '@/contexts/AppContext';
+import { ExplorerManager } from '@/components/ExplorerManager';
+import { IndexerManager } from '@/components/IndexerManager';
+import { NostrRelayManager } from '@/components/NostrRelayManager';
+import { getDefaultNetworkConfig } from '@/lib/defaultConfigs';
 
 const Settings = () => {
   useSeoMeta({
@@ -15,6 +22,18 @@ const Settings = () => {
   });
 
   const { theme, setTheme } = useTheme();
+  const { config, updateConfig } = useAppContext();
+
+  const handleNetworkChange = (newNetwork: BitcoinNetwork) => {
+    const networkDefaults = getDefaultNetworkConfig(newNetwork);
+    updateConfig((cfg) => ({
+      ...cfg,
+      network: newNetwork,
+      explorers: networkDefaults.explorers,
+      indexers: networkDefaults.indexers,
+      nostrRelays: networkDefaults.nostrRelays,
+    }));
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden pb-24">
@@ -73,35 +92,53 @@ const Settings = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-white">Network Type</Label>
-                  <p className="text-sm text-teal-100/60">Currently: Testnet</p>
-                </div>
-                <Button variant="outline" className="bg-white/5 border-teal-700/30 text-white">
-                  Change
-                </Button>
+              <div className="space-y-2">
+                <Label className="text-white">Network Type</Label>
+                <Select 
+                  value={config.network} 
+                  onValueChange={(value) => handleNetworkChange(value as BitcoinNetwork)}
+                >
+                  <SelectTrigger className="border-teal-700/40 bg-teal-950/30 text-white">
+                    <SelectValue placeholder="Select network" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0f2833] border-teal-700/40">
+                    <SelectItem value="testnet" className="text-white focus:bg-teal-900/40 focus:text-white">
+                      <div className="flex flex-col">
+                        <span>Testnet</span>
+                        <span className="text-xs text-teal-100/60">For development and testing</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="mainnet" className="text-white focus:bg-teal-900/40 focus:text-white">
+                      <div className="flex flex-col">
+                        <span>Mainnet</span>
+                        <span className="text-xs text-teal-100/60">Production network</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="regtest" className="text-white focus:bg-teal-900/40 focus:text-white">
+                      <div className="flex flex-col">
+                        <span>Regtest</span>
+                        <span className="text-xs text-teal-100/60">Local testing</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-teal-100/60">
+                  {config.network === 'mainnet' && '⚠️ Using real Bitcoin - be careful with transactions'}
+                  {config.network === 'testnet' && '✓ Using test Bitcoin - safe for development'}
+                  {config.network === 'regtest' && '✓ Using local network - for testing only'}
+                </p>
               </div>
             </CardContent>
           </Card>
 
-          {/* Nostr Relays */}
-          <Card className="bg-[#1a3d4d]/50 border-teal-700/40 backdrop-blur-xl">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Zap className="w-5 h-5" />
-                Nostr Relays
-              </CardTitle>
-              <CardDescription className="text-teal-100/60">
-                Manage your Nostr relay connections
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full bg-white/5 border-teal-700/30 text-white">
-                Manage Relays
-              </Button>
-            </CardContent>
-          </Card>
+          {/* Explorer Manager */}
+          <ExplorerManager />
+
+          {/* Indexer Manager */}
+          <IndexerManager />
+
+          {/* Nostr Relay Manager */}
+          <NostrRelayManager />
 
           {/* Notifications */}
           <Card className="bg-[#1a3d4d]/50 border-teal-700/40 backdrop-blur-xl">

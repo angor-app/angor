@@ -1,20 +1,48 @@
-import * as bip39 from 'bip39';
+import * as bip39 from '@scure/bip39';
+import { wordlist as englishWordlist } from '@scure/bip39/wordlists/english.js';
+import { HDKey } from '@scure/bip32';
+import * as btc from 'bitcoinjs-lib';
 import { WalletWords, AccountInfo, AddressInfo } from '@/types/angor.types';
 
 export class WalletOperations {
   private networkType: 'mainnet' | 'testnet' | 'regtest';
+  private network: btc.Network;
 
   constructor(networkType: 'mainnet' | 'testnet' | 'regtest' = 'testnet') {
     this.networkType = networkType;
+    this.network = networkType === 'mainnet' 
+      ? btc.networks.bitcoin 
+      : btc.networks.testnet;
   }
 
   generateWalletWords(): string {
-    const mnemonic = bip39.generateMnemonic(128);
+    const mnemonic = bip39.generateMnemonic(englishWordlist, 128);
     return mnemonic;
   }
 
   validateMnemonic(mnemonic: string): boolean {
-    return bip39.validateMnemonic(mnemonic);
+    return bip39.validateMnemonic(mnemonic, englishWordlist);
+  }
+
+  private deriveAddress(hdKey: HDKey, path: string): string {
+    const child = hdKey.derive(path);
+    const pubkey = child.publicKey;
+    
+    if (!pubkey) {
+      throw new Error('Failed to derive public key');
+    }
+
+    // Generate P2WPKH (native segwit) address
+    const { address } = btc.payments.p2wpkh({
+      pubkey: Buffer.from(pubkey),
+      network: this.network,
+    });
+
+    if (!address) {
+      throw new Error('Failed to generate address');
+    }
+
+    return address;
   }
 
   generateAccountInfo(
@@ -23,21 +51,33 @@ export class WalletOperations {
     receiveCount: number = 20,
     changeCount: number = 20
   ): AccountInfo {
+    const seed = bip39.mnemonicToSeedSync(walletWords.words, walletWords.password);
+    const hdKey = HDKey.fromMasterSeed(seed);
+    
+    const coinType = this.networkType === 'mainnet' ? 0 : 1;
+    const basePath = `m/84'/${coinType}'/${accountIndex}'`;
+    
     const addresses: AddressInfo[] = [];
 
+    // Generate receive addresses
     for (let i = 0; i < receiveCount; i++) {
+      const path = `${basePath}/0/${i}`;
+      const address = this.deriveAddress(hdKey, path);
       addresses.push({
-        address: `${this.networkType === 'mainnet' ? 'bc1' : 'tb1'}q${this.generateRandomHash()}`,
-        path: `m/84'/${this.networkType === 'mainnet' ? 0 : 1}'/${accountIndex}'/0/${i}`,
+        address,
+        path,
         index: i,
         change: false,
       });
     }
 
+    // Generate change addresses
     for (let i = 0; i < changeCount; i++) {
+      const path = `${basePath}/1/${i}`;
+      const address = this.deriveAddress(hdKey, path);
       addresses.push({
-        address: `${this.networkType === 'mainnet' ? 'bc1' : 'tb1'}q${this.generateRandomHash()}`,
-        path: `m/84'/${this.networkType === 'mainnet' ? 0 : 1}'/${accountIndex}'/1/${i}`,
+        address,
+        path,
         index: i,
         change: true,
       });

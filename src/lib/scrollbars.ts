@@ -26,12 +26,12 @@ export const initScrollbars = () => {
 export const scrollbarOptions = {
   scrollbars: {
     theme: 'os-theme-dark',
-    visibility: 'auto',
-    autoHide: 'move',
+    visibility: 'auto' as const,
+    autoHide: 'move' as const,
     autoHideDelay: 800,
   },
   overflow: {
-    x: 'hidden',
-    y: 'scroll',
+    x: 'hidden' as const,
+    y: 'scroll' as const,
   },
 };

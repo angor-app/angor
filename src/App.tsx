@@ -14,6 +14,7 @@ import { NostrLoginProvider } from '@nostrify/react/login';
 import { AppProvider } from '@/components/AppProvider';
 import { NWCProvider } from '@/contexts/NWCContext';
 import { AppConfig } from '@/contexts/AppContext';
+import { TESTNET_CONFIG } from '@/lib/defaultConfigs';
 import AppRouter from './AppRouter';
 
 const head = createHead({
@@ -34,6 +35,7 @@ const queryClient = new QueryClient({
 
 const defaultConfig: AppConfig = {
   theme: "light",
+  ...TESTNET_CONFIG,
   relayMetadata: {
     relays: [
       { url: 'wss://relay.ditto.pub', read: true, write: true },

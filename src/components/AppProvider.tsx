@@ -24,6 +24,21 @@ const RelayMetadataSchema = z.object({
 // Zod schema for AppConfig validation
 const AppConfigSchema = z.object({
   theme: z.enum(['dark', 'light', 'system']),
+  network: z.enum(['mainnet', 'testnet', 'regtest']),
+  explorers: z.array(z.object({
+    url: z.string().url(),
+    isDefault: z.boolean(),
+  })),
+  indexers: z.array(z.object({
+    url: z.string().url(),
+    status: z.enum(['online', 'offline', 'unknown']),
+    isDefault: z.boolean(),
+  })),
+  nostrRelays: z.array(z.object({
+    url: z.string(),
+    name: z.string(),
+    status: z.enum(['online', 'offline', 'unknown']),
+  })),
   relayMetadata: RelayMetadataSchema,
 }) satisfies z.ZodType<AppConfig>;
 

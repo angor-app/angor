@@ -5,6 +5,8 @@ import Index from "./pages/Index";
 import Projects from "./pages/Projects";
 import CreateProject from "./pages/CreateProject";
 import Wallet from "./pages/Wallet";
+import Send from "./pages/Send";
+import Receive from "./pages/Receive";
 import Investments from "./pages/Investments";
 import Settings from "./pages/Settings";
 import { NIP19Page } from "./pages/NIP19Page";
@@ -19,6 +21,8 @@ export function AppRouter() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/create" element={<CreateProject />} />
         <Route path="/wallet" element={<Wallet />} />
+        <Route path="/wallet/send" element={<Send />} />
+        <Route path="/wallet/receive" element={<Receive />} />
         <Route path="/investments" element={<Investments />} />
         <Route path="/settings" element={<Settings />} />
         {/* NIP-19 route for npub1, note1, naddr1, nevent1, nprofile1 */}
